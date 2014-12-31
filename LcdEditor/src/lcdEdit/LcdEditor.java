@@ -92,7 +92,7 @@ public class LcdEditor extends JFrame
 	/**
 	 * @param args
 	 */
-		protected final String PROGRAM_VERSION = "V1.84";
+		protected final String PROGRAM_VERSION = "V1.841";
 		protected int MAX_PICT_SIZE = 0x800000;
 	    protected int sizeX = 500;
 	    protected int sizeY = 500;
@@ -433,6 +433,7 @@ public class LcdEditor extends JFrame
 			atts.addAttribute("","","DisplayType","CDATA", ""+dProps.getXmlTypeString());
 			atts.addAttribute("","","MirrorTouchX","CDATA", ""+dProps.getMirrorTouchX());
 			atts.addAttribute("","","MirrorTouchY","CDATA", ""+dProps.getMirrorTouchY());
+			atts.addAttribute("","","HardwareMirrorScreen","CDATA", ""+dProps.getMirrorHWLCD());
 			atts.addAttribute("", "", "PhysAddr", "CDATA", physicalAddress.getPhysicalAddressString());
 			atts.addAttribute("", "", "ExportFile", "CDATA", ""+exportFileName);
 			// LCD Data tag.
@@ -598,11 +599,14 @@ public class LcdEditor extends JFrame
 			    				dProps.setTouchMirrorYFromXmlString( parser.getAttributeValue(i));
 			    				processed = true;
 			    			}
+			    			if (parser.getAttributeLocalName( i ) == "HardwareMirrorScreen") {
+			    				dProps.setHwMirrorScreenFromXmlString( parser.getAttributeValue(i));
+			    				processed = true;
+			    			}
 			    			if (parser.getAttributeLocalName( i ) == "IdleDimming") {
 			    				hardwareOptDlg.setBacklightDefault (Integer.decode( parser.getAttributeValue(i)));
 			    				processed = true;
 			    			}
-
 			    			if (parser.getAttributeLocalName( i ) == "PhysAddr" ) {
 			    				physicalAddress.setPhysicalAddress(parser.getAttributeValue( i ));
 			    				processed = true;
@@ -856,12 +860,14 @@ public class LcdEditor extends JFrame
 		  		proOptDlg.setOrientation (dProps);
 		  		proOptDlg.setTouchMirrorX(dProps.getMirrorTouchX());
 		  		proOptDlg.setTouchMirrorY(dProps.getMirrorTouchY());
+		  		proOptDlg.setHWMirrorLcd(dProps.getMirrorHWLCD());
 		  		proOptDlg.setVisible(true);
 		  		if (proOptDlg.getModalResult()) {
 		  			physicalAddress = proOptDlg.getPhysicalAddress();
 		  			dProps = proOptDlg.getDisplayOrientation();
 		  			dProps.setMirrorTouchX(proOptDlg.getTouchMirrorX());
 		  			dProps.setMirrorTouchY(proOptDlg.getTouchMirrorY());
+		  			dProps.setMirrorHWLcd(proOptDlg.getHWMirrorLcd());
 		  			setPageSize (new Dimension (dProps.getXSize(), dProps.getYSize()));
 		  			fileChanged = true;
 		  		}
@@ -1049,7 +1055,7 @@ public class LcdEditor extends JFrame
 		  	
 		  	if (str == "About") {
 		  		JOptionPane.showMessageDialog(null,
-		  		    "LCD Editor "+PROGRAM_VERSION+'\n' + " (c) 2011-2013 by Arno Stock",
+		  		    "LCD Editor "+PROGRAM_VERSION+'\n' + " (c) 2011-2014 by Arno Stock\n (c) 2014 by Stefan Haller",
 		  		    "About LCD Editor",
 		  		    JOptionPane.PLAIN_MESSAGE);
 		  	}
@@ -1292,7 +1298,7 @@ public class LcdEditor extends JFrame
 	  	    		  Header.setSourceFileComment("");
 	  	    		  Header.setPhysicalAddress(physicalAddress.getPhysicalAddress());
 	  	    		  Header.setDisplayOrientation(dProps.getOrientationCode(), dProps.getDisplayTypeCode(),
-	  	    				  dProps.getMirrorTouchX(), dProps.getMirrorTouchY());
+	  	    				  dProps.getMirrorTouchX(), dProps.getMirrorTouchY(), dProps.getMirrorHWLCD());
 
 	  	    		  // create data table objects
 

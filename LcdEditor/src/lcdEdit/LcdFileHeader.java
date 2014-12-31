@@ -27,8 +27,9 @@ public class LcdFileHeader {
 	static final int SIZE_SOURCE_FILE_COMMENT = 40;
 	static final int SIZE_TIME_DATE = 4;
 	static final int SIZE_CHECKSUM = 1;
-
-	static final int HEADERSIZE = SIZE_MAGIC + SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + SIZE_TIME_DATE + SIZE_CHECKSUM;
+	
+	static final int H_SIZE = SIZE_MAGIC + SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT;
+	static final int HEADERSIZE = H_SIZE + SIZE_TIME_DATE + SIZE_CHECKSUM;
 	protected String SourceFileName;
 	protected String SourceFileComment;
 	protected byte[] HeaderBuffer = new byte [HEADERSIZE];
@@ -63,18 +64,18 @@ public class LcdFileHeader {
 
 		// add time-date info (UNIX like seconds since 1.1.1970)
 		int time = (int) (System.currentTimeMillis() / 1000L);
-		HeaderBuffer [SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + 0] = (byte) ( time        & 0xff);
-		HeaderBuffer [SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + 1] = (byte) ((time >> 8 ) & 0xff);
-		HeaderBuffer [SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + 2] = (byte) ((time >> 16) & 0xff);
-		HeaderBuffer [SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + 3] = (byte) ((time >> 24) & 0xff);
+		HeaderBuffer [H_SIZE + 0] = (byte) ( time        & 0xff);
+		HeaderBuffer [H_SIZE + 1] = (byte) ((time >> 8 ) & 0xff);
+		HeaderBuffer [H_SIZE + 2] = (byte) ((time >> 16) & 0xff);
+		HeaderBuffer [H_SIZE + 3] = (byte) ((time >> 24) & 0xff);
 		
 		// calc checksum
 		byte cs = 0;
-		for (int i = 0; i < SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + SIZE_TIME_DATE; i++) {
+		for (int i = 0; i <  + H_SIZE + SIZE_TIME_DATE; i++) {
 			cs = (byte) (cs ^ HeaderBuffer [i]);
 		}
 		// output buffer to stream
-		HeaderBuffer [SIZE_MAGIC+  SIZE_VERSION + SIZE_PHYSICAL_ADDRESS + SIZE_ORIENTATION + SIZE_DIMMING + SIZE_SOURCE_FILE + SIZE_SOURCE_FILE_COMMENT + SIZE_TIME_DATE] = cs;
+		HeaderBuffer [H_SIZE + SIZE_TIME_DATE] = cs;
 		os.write(HeaderBuffer);
 	}
 
@@ -122,13 +123,16 @@ public class LcdFileHeader {
 		HeaderBuffer [8] = (byte) ((physicalAddress >> 0) & 0xff);
 	}
 
-	public void setDisplayOrientation (int orientation, int tft, boolean touchMirrorX, boolean touchMirrorY) {
-		// physical address of device
+	public void setDisplayOrientation (int orientation, int tft, boolean touchMirrorX, boolean touchMirrorY, boolean HWmirrorLCD) {
+		// display configuration
+		// d7: invert x, d6: invert y, d5: HW-mirror, d3-2: Display Type, d1-0: display orientation
 		HeaderBuffer [9] = (byte) ((orientation & 0x0f) | ((tft & 0x0f) << 2));
 		if (touchMirrorX)
 			HeaderBuffer [9] |= (byte) 0x80;
 		if (touchMirrorY)
 			HeaderBuffer [9] |= (byte) 0x40;
+		if (HWmirrorLCD)
+			HeaderBuffer [9] |= (byte) 0x20;
 	}
 
 }

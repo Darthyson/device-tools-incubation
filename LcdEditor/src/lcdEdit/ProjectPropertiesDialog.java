@@ -39,6 +39,7 @@ public class ProjectPropertiesDialog extends JDialog implements ActionListener, 
     JTextField physAddrField;
     JCheckBox cbMirrorTouchX;
     JCheckBox cbMirrorTouchY;
+    JCheckBox cbHWMirrorLcd;
     Boolean modalResult;
     PhysicalAddress physicalAddress;
     Integer dimmingLevel;
@@ -72,6 +73,7 @@ public class ProjectPropertiesDialog extends JDialog implements ActionListener, 
 
         cbMirrorTouchX = new JCheckBox ("Mirror Touch (X)");
         cbMirrorTouchY = new JCheckBox ("Mirror Touch (Y)");
+        cbHWMirrorLcd = new JCheckBox ("Hardware Mirror Screen");
         
         physAddrField = new JTextField (6);
         physAddrField.addFocusListener(this);
@@ -85,6 +87,7 @@ public class ProjectPropertiesDialog extends JDialog implements ActionListener, 
         sizePanel.add("Center", oriPanel);
         sizePanel.add("South", cbMirrorTouchX);
         sizePanel.add("South", cbMirrorTouchY);
+        sizePanel.add("South", cbHWMirrorLcd);
         
         add("Center", sizePanel);
         
@@ -191,6 +194,14 @@ public class ProjectPropertiesDialog extends JDialog implements ActionListener, 
 	
 	public Boolean getTouchMirrorY () {
 		return cbMirrorTouchY.isSelected();
+	}
+	
+	public Boolean getHWMirrorLcd () {
+		return cbHWMirrorLcd.isSelected();
+	}
+	
+	public void setHWMirrorLcd (Boolean b) {
+		cbHWMirrorLcd.setSelected(b);
 	}
 	
 	public void setTouchMirrorX (Boolean b) {

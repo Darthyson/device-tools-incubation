@@ -27,6 +27,7 @@ public class DisplayProperties {
     
     Boolean mirrorTouchX;
     Boolean mirrorTouchY;
+    Boolean mirrorHwLcd;
     
     public DisplayProperties () {
     	myOrientation = Orientations.horizontal;
@@ -35,6 +36,7 @@ public class DisplayProperties {
     	ySize = getTFTYSize ();
     	mirrorTouchX = false;
     	mirrorTouchY = false;
+    	mirrorHwLcd = false;
     }
     
     public DisplayProperties (Orientations o, TFTTypes t) {
@@ -48,6 +50,7 @@ public class DisplayProperties {
 		}
     	mirrorTouchX = false;
     	mirrorTouchY = false;
+    	mirrorHwLcd = false;
     }
     
     public void setOrientation (Orientations o) {
@@ -166,6 +169,9 @@ public class DisplayProperties {
 		setMirrorTouchY(s.equalsIgnoreCase("true"));
 	}
 	
+	public void setHwMirrorScreenFromXmlString(String s) {
+		setMirrorHWLcd(s.equalsIgnoreCase("true"));
+	}
 	
 	public Integer getXSize() {
 		return xSize;
@@ -261,6 +267,14 @@ public class DisplayProperties {
 
 	public void setMirrorTouchY(Boolean mirrorTouchY) {
 		this.mirrorTouchY = mirrorTouchY;
+	}
+
+	public void setMirrorHWLcd(Boolean mirrorHwLcd) {
+		this.mirrorHwLcd = mirrorHwLcd;
+	}
+	
+	public Boolean getMirrorHWLCD() {
+		return mirrorHwLcd;
 	}
 
 

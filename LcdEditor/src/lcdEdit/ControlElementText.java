@@ -368,7 +368,7 @@ public class ControlElementText extends EIBComp implements
 	public void outputToLcdFile(LcdImageContainer imageContainer,
 			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses, 
 			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
-			DisplayProperties dor, LcdListenerContainer listener, int myPage) {
+			DisplayProperties dor, LcdListenerContainer listener, LcdTimeoutContainer timeout, int myPage) {
 
 	    BufferedImage backgroundImage = new BufferedImage(((LcdEditor)myParent).getMaxX(), ((LcdEditor)myParent).getMaxY(), BufferedImage.TYPE_INT_RGB);
 	    Graphics gbi = backgroundImage.createGraphics();

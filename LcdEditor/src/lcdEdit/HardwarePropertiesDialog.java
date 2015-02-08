@@ -39,7 +39,7 @@ public class HardwarePropertiesDialog extends JDialog implements ActionListener,
 	private Frame myFrame;
     private Boolean modalResult;
 	private final static String ioPinNames[] = { "PE0 (1)", "PE1 (9)", "PE2 (LP)", "PF4 (4)", "PF5 (7)",
-			"PF6 (5)", "PF7 (6)", "backlight active", "backlight idle" };
+			"PF6 (5)", "PF7 (6)", "backlight active", "backlight idle", "backlight control" };
 	List<HardwarePanelElement> hweList;
     
     HardwarePropertiesDialog (Frame myFrame) {

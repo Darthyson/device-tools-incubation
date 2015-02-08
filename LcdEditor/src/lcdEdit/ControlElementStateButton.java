@@ -599,7 +599,7 @@ public class ControlElementStateButton extends EIBComp implements
 	public void outputToLcdFile(LcdImageContainer imageContainer,
 			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses,
 			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
-			DisplayProperties dor, LcdListenerContainer listener, int myPage) {
+			DisplayProperties dor, LcdListenerContainer listener, LcdTimeoutContainer timeout, int myPage) {
 
 		// create background image to support transparency
 		BufferedImage localImageButtonUpOff = getElementBackground (backgroundComp, pageBackgroundColor);

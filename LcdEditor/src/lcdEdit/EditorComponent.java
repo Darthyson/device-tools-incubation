@@ -26,7 +26,8 @@ public interface EditorComponent {
 	public void outputToLcdFile (LcdImageContainer imageContainer, LcdPageContainer pageContainer, 
 									LcdEibAddresses eibAddresses, LcdSoundContainer soundContainer,
 									Component[] backgroundComp, Color backgroundColor,
-									DisplayProperties dor, LcdListenerContainer listeners, int myPage);
+									DisplayProperties dor, LcdListenerContainer listeners, 
+									LcdTimeoutContainer timeout, int myPage);
 	
 	public boolean isSelected ();
 	

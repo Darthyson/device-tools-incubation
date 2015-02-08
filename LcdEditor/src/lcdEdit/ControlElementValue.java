@@ -40,6 +40,7 @@ public class ControlElementValue extends EIBComp implements
 	private boolean selected;
 	protected Color cBackGround;
 	private Color fontColor;
+	private Color fontTimeoutColor;
 	private Font elementFont;
 	private String postFixUnit;
 	private	int TextX;
@@ -49,26 +50,32 @@ public class ControlElementValue extends EIBComp implements
 	private ValueFormatType valueFormat;
 	private int integers;
 	private int decimals;
+	private int timeoutTime;
+	
+	private boolean showTimeoutColor = false;
 
 	public ControlElementValue(LcdEditor server, 
 				int x, int y, int w, int h, char sAddr0,
-				Font elementFont, Color fontColor, Color cBackGround, int TextX, int TextY, 
-				String postFixUnit, boolean opac, int valueFormatSelection, int integers, int decimals) {
+				Font elementFont, Color fontColor, Color fontTimeoutColor, Color cBackGround, int TextX, int TextY, 
+				String postFixUnit, boolean opac, int valueFormatSelection, int integers, int decimals, int timeoutTime) {
 
 		super (server, x, y, w, h, "");
 		eibObj[0] = new EIBObj (sAddr0);
 		this.cBackGround = cBackGround;
 		this.TextX = TextX;	TextY = this.TextY = TextY;
 		this.fontColor = fontColor;
+		this.fontTimeoutColor = fontTimeoutColor;
 		this.elementFont = new Font (elementFont.getFamily(), elementFont.getStyle(), elementFont.getSize());
 		this.postFixUnit = postFixUnit;
 		this.opac = opac;
 		this.valueFormat = new ValueFormatType (valueFormatSelection);
 		this.integers = integers;
 		this.decimals = decimals;
+		this.timeoutTime = timeoutTime;
 		setUpElement ();
 		addMouseMotionListener(this);
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		showTimeoutColor = false;
 	}
 
 	public ControlElementValue(LcdEditor server, 
@@ -79,15 +86,18 @@ public class ControlElementValue extends EIBComp implements
 		cBackGround = Color.white;
 		TextX = (int) getWidth()/10;	TextY = (int) (0.6*getHeight ());
 		this.fontColor = Color.black;
+		this.fontTimeoutColor = Color.red;
 		this.elementFont = new Font ("Arial", Font.BOLD, 16);
 		postFixUnit = "";
 		opac = true;
 		this.valueFormat = new ValueFormatType (0);
 		integers = 2;
 		decimals = 1;
+		timeoutTime = 0;
 		setUpElement ();
 		addMouseMotionListener(this);
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		showTimeoutColor = false;
 	}
 
 	
@@ -120,6 +130,14 @@ public class ControlElementValue extends EIBComp implements
 			fontColor = setAlphaKeepColor (fontColor, Integer.decode(parser.getAttributeValue( i )));
 			return;
 		}
+		if (parser.getAttributeLocalName( i ) == "FontTimeoutColor" ) {
+			fontTimeoutColor = setColorKeepAlpha (fontTimeoutColor, Color.decode (parser.getAttributeValue( i )));
+			return;
+		}
+		if (parser.getAttributeLocalName( i ) == "FontTimeoutAlpha" ) {
+			fontTimeoutColor = setAlphaKeepColor (fontTimeoutColor, Integer.decode(parser.getAttributeValue( i )));
+			return;
+		}
 		if (parser.getAttributeLocalName( i ) == "Font" ) {
 			elementFont = Font.decode(parser.getAttributeValue( i ));
 			return;
@@ -148,6 +166,11 @@ public class ControlElementValue extends EIBComp implements
 			decimals = Integer.decode (parser.getAttributeValue( i ));
 			return;
 		}
+		if (parser.getAttributeLocalName( i ) == "Timeout" ) {
+			timeoutTime = Integer.decode (parser.getAttributeValue( i ));
+			return;
+		}
+		
 		super.handleAttribute (parser, i);
 	}
 
@@ -156,6 +179,7 @@ public class ControlElementValue extends EIBComp implements
 		super (server, parser, null, null);
 		if (elementFont == null) elementFont = new Font ("Arial", Font.PLAIN, DEFAULT_TEXT_SIZE);
 		if (fontColor == null) fontColor = Color.black;
+		if (fontTimeoutColor == null) fontTimeoutColor = Color.red;
 		if (cBackGround == null) cBackGround = Color.white;
 		if (postFixUnit == null) postFixUnit = "";
 		if (valueFormat == null) valueFormat = new ValueFormatType (0);
@@ -166,8 +190,8 @@ public class ControlElementValue extends EIBComp implements
 	@Override
 	public EditorComponent getClone () {
 		return new ControlElementValue ((LcdEditor)myParent, getX()+5, getY()+5, getWidth(), getHeight(), 
-				eibObj[0].getAddr(), elementFont, fontColor, cBackGround, TextX, TextY, 
-				postFixUnit, opac, valueFormat.getValueFormat(), integers, decimals );
+				eibObj[0].getAddr(), elementFont, fontColor, fontTimeoutColor, cBackGround, TextX, TextY, 
+				postFixUnit, opac, valueFormat.getValueFormat(), integers, decimals, timeoutTime );
 	}
 
 	@Override
@@ -192,10 +216,13 @@ public class ControlElementValue extends EIBComp implements
 				FontStyleCalc.getFontStyle(elementFont.getStyle())+"-"+elementFont.getSize());
 		atts.addAttribute("","","FontColor","CDATA",""+fontColor.getRGB());
 		atts.addAttribute("","","FontAlpha","CDATA",""+fontColor.getAlpha());
+		atts.addAttribute("","","FontTimeoutColor","CDATA",""+fontTimeoutColor.getRGB());
+		atts.addAttribute("","","FontTimeoutAlpha","CDATA",""+fontTimeoutColor.getAlpha());
 		atts.addAttribute("","","Unit","CDATA",""+postFixUnit);
 		atts.addAttribute("","","ValueFormat","CDATA",""+valueFormat.getValueFormat());
 		atts.addAttribute("","","Integers","CDATA",""+integers);
 		atts.addAttribute("","","Decimals","CDATA",""+decimals);
+		atts.addAttribute("","","Timeout","CDATA",""+timeoutTime);
 		if (opac)
 			atts.addAttribute("","","Opac","CDATA","");
 		hd.startElement("","","Value",atts);
@@ -216,6 +243,7 @@ public class ControlElementValue extends EIBComp implements
 			((LcdEditor)myParent).selectElement (this,!e.isControlDown());
 		}
 		else if (e.getModifiers() == 4) {
+			showTimeoutColor = true;
 			repaint();
 		}
 	}
@@ -228,6 +256,7 @@ public class ControlElementValue extends EIBComp implements
 			getParent().invalidate();
 		}
 		else if (e.getModifiers() == 4) {
+			showTimeoutColor = false;
 			repaint();
 		}
 
@@ -280,8 +309,10 @@ public class ControlElementValue extends EIBComp implements
 							{"listen", AddrTranslator.getAdrString (eibObj[0]) },
 							{"init",  eibObj[0].init },
 							{"text color", fontColor },
+							{"text timeout", fontTimeoutColor},
 							{"background", cBackGround },
-							{"opac",  opac }
+							{"opac",  opac },
+							{"timeout [Min]", timeoutTime },
     					  }; 
 
     	((LcdEditor)myParent).setTable (data, "Value");
@@ -308,7 +339,8 @@ public class ControlElementValue extends EIBComp implements
 		if (object == "x-pos") {
 			int x = new Integer((String)value).intValue();
 			if (!checkLocation (x, getY())) return false;
-			repaint();
+//			repaint();
+			setLocation (x, getY());
 			return true;
 		}
 
@@ -343,6 +375,12 @@ public class ControlElementValue extends EIBComp implements
 			return true;
 		}
 		
+		if (object == "text timeout") {
+			fontTimeoutColor = (Color) value;
+//			repaint();
+			return true;
+		}
+
 		if (object == "background") {
 			cBackGround = (Color) value;
 			repaint();
@@ -394,6 +432,13 @@ public class ControlElementValue extends EIBComp implements
 			repaint();
 			return true;
 		}
+		if (object == "timeout [Min]") {
+			int d = new Integer((String)value).intValue();
+			if ((d < 0) || (d > 255)) return false;
+			timeoutTime = d;
+			repaint();
+			return true;
+		}
 
 		return false;
 	}
@@ -411,7 +456,9 @@ public class ControlElementValue extends EIBComp implements
 		}
 		
 		String s = valueFormat.getValueFormatExample(integers, decimals);
-		g.setColor(fontColor);
+		if (showTimeoutColor)
+			g.setColor(fontTimeoutColor);
+		else g.setColor(fontColor);
 		g.setFont (elementFont);
 		g.drawString(s + postFixUnit, TextX, TextY);
 
@@ -441,28 +488,17 @@ public class ControlElementValue extends EIBComp implements
 		}
 	}
 	
-	protected static byte SIZE_VALUE_PARAMETERS = 10;
+	protected static byte SIZE_VALUE_PARAMETERS = 13;
 	protected static byte SIZE_OF_VALUE_OBJECT = (byte) (SIZE_VALUE_PARAMETERS + 2); // +2 for type and size
 	protected static byte VALUE_OBJECT_TYPE = 5;
 	// for parameters
 	protected static byte VALUE_FLAG_INIT_OBJECT = (byte) 0x80;
 	protected static final String numbers [] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", ":"};
 
-	@Override
-	public void outputToLcdFile(LcdImageContainer imageContainer,
-			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses, 
-			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
-			DisplayProperties dor, LcdListenerContainer listener, int myPage) {
-
-		// create background image to support transparency
-		BufferedImage localBackground = getElementBackground (backgroundComp, pageBackgroundColor);
-		
-		// merge icon and text for button up onto background
-		Graphics gbi = localBackground.createGraphics();
-		if (opac) {
-			gbi.setColor(cBackGround);
-			gbi.fillRect(0, 0, getWidth(), getHeight());	
-		}
+	
+	private int createFontBitmaps (LcdImageContainer imageContainer, BufferedImage localBackground,
+										Component[] backgroundComp, Color pageBackgroundColor, Color fontColor) {
+		Graphics gbi;
 		int first = imageContainer.addImage(localBackground, getWidth(), getHeight());
 		// create font information
 		for (int i = 0; i < numbers.length; i++) {
@@ -498,6 +534,31 @@ public class ControlElementValue extends EIBComp implements
 			postFixWidth = 1;
 		// add image to image container
 		imageContainer.addImage(postFix.getSubimage(TextX, 0, postFixWidth, getHeight()), postFixWidth, getHeight());
+		
+		return first;
+
+	}
+	
+	@Override
+	public void outputToLcdFile(LcdImageContainer imageContainer,
+			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses, 
+			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
+			DisplayProperties dor, LcdListenerContainer listener, LcdTimeoutContainer timeout, int myPage) {
+
+		// create background image to support transparency
+		BufferedImage localBackground = getElementBackground (backgroundComp, pageBackgroundColor);
+		
+		// merge icon and text for button up onto background
+		Graphics gbi = localBackground.createGraphics();
+		if (opac) {
+			gbi.setColor(cBackGround);
+			gbi.fillRect(0, 0, getWidth(), getHeight());	
+		}
+		int first = createFontBitmaps (imageContainer, localBackground,
+				backgroundComp, pageBackgroundColor, fontColor);
+		// add character set for timeout condition
+		int firstTimeout = createFontBitmaps (imageContainer, localBackground,
+				backgroundComp, pageBackgroundColor, fontTimeoutColor);
 
 		// add value element to output file
 		byte[] parameter = new byte [SIZE_VALUE_PARAMETERS];
@@ -505,25 +566,34 @@ public class ControlElementValue extends EIBComp implements
 		// images: empty background, characters, postFixUnit
 		parameter [1] = (byte) ((first >> 8) & 0xff);
 		parameter [0] = (byte) ((first >> 0) & 0xff);
+		parameter [3] = (byte) ((firstTimeout >> 8) & 0xff);
+		parameter [2] = (byte) ((firstTimeout >> 0) & 0xff);
 		// start pos x
 		Point origin = dor.getElementOrigin(getXPos(), getYPos(), new Dimension (getWidth(), getHeight()));
-		parameter [3] = (byte) ((origin.x >> 8) & 0xff);
-		parameter [2] = (byte) ((origin.x >> 0) & 0xff);
+		parameter [5] = (byte) ((origin.x >> 8) & 0xff);
+		parameter [4] = (byte) ((origin.x >> 0) & 0xff);
 		// start pos y
-		parameter [5] = (byte) ((origin.y >> 8) & 0xff);
-		parameter [4] = (byte) ((origin.y >> 0) & 0xff);
+		parameter [7] = (byte) ((origin.y >> 8) & 0xff);
+		parameter [6] = (byte) ((origin.y >> 0) & 0xff);
 		// start Xpos offset of first character
-		parameter [6] = (byte) TextX;
+		parameter [8] = (byte) TextX;
 		// character length
-		parameter [7] = (byte) ((byte) integers << 4 | (byte) decimals);
+		parameter [9] = (byte) ((byte) integers << 4 | (byte) decimals);
 		// EIB Object # for listen
-		parameter [8] = (byte) (eibAddresses.getAddrIndex(eibObj[0].getAddr()) & 0xff);
+		parameter [10] = (byte) (eibAddresses.getAddrIndex(eibObj[0].getAddr()) & 0xff);
 		//Parameter: d0-d3 = value format, d7=init flag
-		parameter [9] = (byte) valueFormat.getValueFormat();
+		parameter [11] = (byte) valueFormat.getValueFormat();
 		if (eibObj[0].init)
-			parameter [9] |= VALUE_FLAG_INIT_OBJECT; 
-		// store element to current page
+			parameter [11] |= VALUE_FLAG_INIT_OBJECT;
+		parameter [12] = (byte) timeoutTime;
+ 		// store element to current page
 		pageContainer.addElement(SIZE_OF_VALUE_OBJECT, VALUE_OBJECT_TYPE, parameter);
+		
+		/* define timeout function for EIB object. */
+		if (timeoutTime > 0) {
+			timeout.addAddr (eibAddresses, listener, eibObj[0].getAddr());
+		}
+
 	}
 
 	@Override

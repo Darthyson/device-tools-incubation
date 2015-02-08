@@ -43,7 +43,7 @@ public class LcdFileHeader {
 		HeaderBuffer [4] = 'C';
 		HeaderBuffer [5] = 'D';
 		// file structure version
-		HeaderBuffer [6] = 0x1D;
+		HeaderBuffer [6] = 0x1E;
 		// physical address of device
 		HeaderBuffer [7] = (byte) 0xff;
 		HeaderBuffer [8] = (byte) 0xff;

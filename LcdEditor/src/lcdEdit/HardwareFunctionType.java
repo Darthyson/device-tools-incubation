@@ -53,15 +53,16 @@ public class HardwareFunctionType {
 
 	// backlight
 	final static String backlightNumberFormatTypes[] = { "EIS 6" };
-	public static final String dhtSensorTypes[] = { "DHT11", "DHT21", "DHT22" };
 	private Boolean busControlEnabled;
 	Integer backlightNumberFormat;
 	Integer defaultBacklight;
+	Integer defaultBacklightTime;
 	
 	// IR
 	private RC5CommandList rc5Commands;
 	
 	// DHTxx
+	public static final String dhtSensorTypes[] = { "DHT11", "DHT21", "DHT22" };
 	EIBObj groupAddress2;
 	Float humidityOffset;
 	Integer dhtSensorType;
@@ -83,11 +84,16 @@ public class HardwareFunctionType {
 		dhtSensorType = 0;
 		backlightNumberFormat = 0;
 		defaultBacklight = 50;
+		defaultBacklightTime = 30;
 		rc5Commands = new RC5CommandList ();
 	}
 	
 	public void setDefaultBacklight (int defaultBacklight) {
 		this.defaultBacklight = defaultBacklight;
+	}
+	
+	public void setDefaultBacklightTime (int defaultBacklightTime) {
+		this.defaultBacklightTime = defaultBacklightTime;
 	}
 	
 	public String getFunctionParameters () {

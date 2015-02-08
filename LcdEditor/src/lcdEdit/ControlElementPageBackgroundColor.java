@@ -42,7 +42,7 @@ public class ControlElementPageBackgroundColor extends EIBComp  {
 	public void outputToLcdFile(LcdImageContainer imageContainer,
 			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses, 
 			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
-			DisplayProperties dor, LcdListenerContainer listener, int myPage) {
+			DisplayProperties dor, LcdListenerContainer listener, LcdTimeoutContainer timeout, int myPage) {
 		// add image to image container
 		byte[] parameter = new byte [SIZE_BACKGROUND_PARAMETERS];
 		// color information

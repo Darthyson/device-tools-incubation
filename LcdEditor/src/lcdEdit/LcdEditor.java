@@ -92,7 +92,7 @@ public class LcdEditor extends JFrame
 	/**
 	 * @param args
 	 */
-		protected final String PROGRAM_VERSION = "V1.841";
+		protected final String PROGRAM_VERSION = "V1.842";
 		protected int MAX_PICT_SIZE = 0x800000;
 	    protected int sizeX = 500;
 	    protected int sizeY = 500;
@@ -1311,7 +1311,10 @@ public class LcdEditor extends JFrame
 	  	    		  
 	  	    		  // always listening objects
 	  	    		  LcdListenerContainer Listeners = new LcdListenerContainer ();
-	  	    		  
+
+	  	    		  // always listening objects
+	  	    		  LcdTimeoutContainer Timeouts = new LcdTimeoutContainer ();
+
 	  	    		  // cyclic objects
 	  	    		  LcdCyclicContainer Cyclics = new LcdCyclicContainer ();
 	  	    		  
@@ -1370,7 +1373,7 @@ public class LcdEditor extends JFrame
 	  	    			  if (layeredPane.isOpaque()) {
 	  	    				  // set page color
 	  	    				  ControlElementPageBackgroundColor backgroundComponent = new ControlElementPageBackgroundColor (layeredPane.getBackground().getRGB());
-	  	    				  backgroundComponent.outputToLcdFile(Images, Pages, GroupAddr, Sounds, null, null, dProps, Listeners, i);
+	  	    				  backgroundComponent.outputToLcdFile(Images, Pages, GroupAddr, Sounds, null, null, dProps, Listeners, null, i);
 	  	    			  }
 
 	  	    			  // get background components on this page
@@ -1379,7 +1382,7 @@ public class LcdEditor extends JFrame
 	  	    			  for ( Component thisComp : backgroundComp ) {
 	  	    				  if (EIBComp.class.isInstance (thisComp)) {
 	  	    					  EditorComponent co = (EditorComponent)thisComp;
-	  	    					  co.outputToLcdFile(Images, Pages, GroupAddr, Sounds, backgroundComp, layeredPane.getBackground(),dProps, Listeners, i);
+	  	    					  co.outputToLcdFile(Images, Pages, GroupAddr, Sounds, backgroundComp, layeredPane.getBackground(),dProps, Listeners, Timeouts, i);
 	  	    				  }
 	  	    			  }
 	  					
@@ -1390,7 +1393,7 @@ public class LcdEditor extends JFrame
 	  	    			  for ( Component thisComp : comp ) {
 	  	    				  if (EIBComp.class.isInstance (thisComp)) {
 	  	    					  EditorComponent co = (EditorComponent)thisComp;
-	  	    					  co.outputToLcdFile(Images, Pages, GroupAddr, Sounds, backgroundComp, layeredPane.getBackground(), dProps, Listeners, i);
+	  	    					  co.outputToLcdFile(Images, Pages, GroupAddr, Sounds, backgroundComp, layeredPane.getBackground(), dProps, Listeners, Timeouts, i);
 	  	    				  }
 	  	    			  }
 	  	    			  

@@ -196,7 +196,7 @@ public class ControlElementLED extends EIBComp implements
 		atts.addAttribute("","","RadioValue","CDATA",""+radioValue);
 		atts.addAttribute("","","PictureOn","CDATA",""+pictureIDon);
 		atts.addAttribute("","","PictureOff","CDATA",""+pictureIDoff);
-		if (pictureIDwarning != PictureLibrary.PICTURE_ID_NONE)
+//		if (pictureIDwarning != PictureLibrary.PICTURE_ID_NONE)
 			atts.addAttribute("","","PictureWarning","CDATA",""+pictureIDwarning);
 		atts.addAttribute("","","Font","CDATA",buttonFont.getFamily()+"-"+
 				FontStyleCalc.getFontStyle(buttonFont.getStyle())+"-"+buttonFont.getSize());
@@ -666,7 +666,7 @@ public class ControlElementLED extends EIBComp implements
 	public void outputToLcdFile(LcdImageContainer imageContainer,
 			LcdPageContainer pageContainer, LcdEibAddresses eibAddresses, 
 			LcdSoundContainer soundContainer, Component[] backgroundComp, Color pageBackgroundColor,
-			DisplayProperties dor, LcdListenerContainer listener, int myPage) {
+			DisplayProperties dor, LcdListenerContainer listener, LcdTimeoutContainer timeout, int myPage) {
 
 		// create background image to support transparency
 		BufferedImage localImageLedOff = getElementBackground (backgroundComp, pageBackgroundColor);

@@ -64,7 +64,10 @@ public class HardwarePanelElement extends Object implements ItemListener, Action
 					functionSelectionBox.addItem(h);
 					if (elementName.contains("active"))
 						h.setDefaultBacklight(100);
-					else h.setDefaultBacklight(6); 
+					else if (elementName.contains("idle"))
+						h.setDefaultBacklight(6);
+					else if (elementName.contains("control"))
+						h.setDefaultBacklightTime(30);
 				}
 			}
 			else if (elementName.contains ("PE1")) {
